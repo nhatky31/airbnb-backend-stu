@@ -1,27 +1,26 @@
-const { Booking } = require('../models'); // Đảm bảo import đúng tên Model của bạn (Booking hoặc Ticket)
+const { Ticket } = require('../models');
 
 const createBooking = async (req, res) => {
   try {
-    // Các trường dữ liệu cơ bản khi đặt phòng (bạn điều chỉnh lại cho khớp Model nhé)
-    const { user_id, room_id, checkIn, checkOut, guestCount } = req.body;
+    const { userId, roomId, checkIn, checkOut } = req.body;
     
-    const newBooking = await Booking.create({ 
-      user_id, 
-      room_id, 
+    const newBooking = await Ticket.create({ 
+      userId, 
+      roomId, 
       checkIn, 
-      checkOut, 
-      guestCount 
+      checkOut 
     });
     
     res.status(201).json(newBooking);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Lỗi khi tạo vé đặt phòng", error });
   }
 };
 
 const getAllBookings = async (req, res) => {
   try {
-    const bookings = await Booking.findAll();
+    const bookings = await Ticket.findAll();
     res.status(200).json(bookings);
   } catch (error) {
     res.status(500).json({ message: "Lỗi khi lấy danh sách đặt phòng", error });
@@ -31,7 +30,7 @@ const getAllBookings = async (req, res) => {
 const getBookingById = async (req, res) => {
   try {
     const { id } = req.params;
-    const booking = await Booking.findByPk(id);
+    const booking = await Ticket.findByPk(id);
     if (!booking) {
       return res.status(404).json({ message: "Không tìm thấy thông tin đặt phòng" });
     }
@@ -44,14 +43,14 @@ const getBookingById = async (req, res) => {
 const updateBooking = async (req, res) => {
   try {
     const { id } = req.params;
-    const { checkIn, checkOut, guestCount } = req.body;
+    const { checkIn, checkOut } = req.body;
     
-    const booking = await Booking.findByPk(id);
+    const booking = await Ticket.findByPk(id);
     if (!booking) {
       return res.status(404).json({ message: "Không tìm thấy vé để cập nhật" });
     }
     
-    await booking.update({ checkIn, checkOut, guestCount });
+    await booking.update({ checkIn, checkOut });
     res.status(200).json(booking);
   } catch (error) {
     res.status(500).json({ message: "Lỗi khi cập nhật đặt phòng", error });
@@ -61,7 +60,7 @@ const updateBooking = async (req, res) => {
 const deleteBooking = async (req, res) => {
   try {
     const { id } = req.params;
-    const booking = await Booking.findByPk(id);
+    const booking = await Ticket.findByPk(id);
     if (!booking) {
       return res.status(404).json({ message: "Không tìm thấy vé để xóa" });
     }
