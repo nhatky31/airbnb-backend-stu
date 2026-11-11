@@ -1,0 +1,39 @@
+Giai đoạn 1: Khởi tạo & Cấu hình nền tảng (Bạn vừa hoàn thành)
+
+Khởi tạo dự án Node.js và cài đặt các thư viện cần thiết (Express, Sequelize, MySQL2).
+
+Phân chia cấu trúc thư mục theo chuẩn MVC (Models, Views/Routes, Controllers).
+
+Cấu hình file kết nối để Node.js giao tiếp được với MySQL thông qua Workbench.
+
+Giai đoạn 2: Mô hình hóa Dữ liệu & Quan hệ (Bạn đang ở bước cuối của giai đoạn này)
+
+Dùng công cụ Sequelize CLI tự động sinh ra các bảng dữ liệu (Models) cho User, Location, Room, Review, Ticket.
+
+Khai báo các mối quan hệ Khóa ngoại (Associations như hasMany, belongsTo) để liên kết dữ liệu.
+
+Đồng bộ hóa (Sync) code đẩy xuống MySQL để tạo cấu trúc bảng thực tế.
+
+Giai đoạn 3: Xây dựng Bộ điều hướng & Xử lý nghiệp vụ (Routing & Controller - Chuẩn bị làm)
+
+Xây dựng routes để tiếp nhận các đường dẫn API từ Frontend hoặc Postman gửi tới (ví dụ: /api/users, /api/rooms).
+
+Viết logic xử lý trong controllers để thực hiện các thao tác Thêm, Đọc, Sửa, Xóa (CRUD) và tương tác trực tiếp với Database.
+
+Giai đoạn 4: Xác thực & Phân quyền (Authentication & Authorization)
+
+Viết API Đăng ký, Đăng nhập và mã hóa mật khẩu người dùng bằng bcryptjs.
+
+Cấp phát Token (JWT) và xây dựng các hàm middlewares để chặn những người dùng chưa đăng nhập hoặc kiểm tra quyền quản trị viên (Admin).
+
+Giai đoạn 5: Tích hợp tính năng phụ trợ
+
+Cấu hình thư viện multer để xử lý chức năng tải ảnh (avatar, ảnh phòng khách sạn) từ Client lên thư mục uploads của Server.
+
+Hoàn thiện các tính năng lọc dữ liệu, tìm kiếm, phân trang và xử lý bẫy lỗi (error handling).
+
+Giai đoạn 6: Kiểm thử nghiệm thu & Triển khai (Testing & Deployment)
+
+Sử dụng file Postman Collection chứa 34 APIs bạn đã có để test lại toàn bộ đầu vào/đầu ra đảm bảo hệ thống không bị sập.
+
+Đóng gói code đẩy lên GitHub và triển khai lên các dịch vụ máy chủ đám mây (Render, Railway hoặc VPS) để Frontend của bạn kia có thể kết nối internet thật.
