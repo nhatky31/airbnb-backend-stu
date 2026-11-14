@@ -30,7 +30,7 @@ const authorize = (arrType) => {
     const { type } = req.user; // Lấy type (hoặc role) từ token đã giải mã ở trên
     
     // Kiểm tra xem type của user có nằm trong danh sách được phép (arrType) không
-    if (arrType.includes(type)) {
+    if (type && arrType.includes(type.toUpperCase())) {
       next(); // Là ADMIN -> Cho đi tiếp
     } else {
       res.status(403).json({ message: "Bạn không có quyền thực hiện hành động này!" });

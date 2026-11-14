@@ -6,12 +6,11 @@ const { authenticate, authorize } = require('../middlewares/auth.middleware');
 const uploadCloud= require('../middlewares/upload.middleware');
 const locationRouter = express.Router();
 
-locationRouter.post('/', authenticate, authorize(['admin']), uploadCloud.single('image'), createLocation);
-locationRouter.post('/', createLocation);
+locationRouter.post('/', authenticate, authorize(['ADMIN']), uploadCloud.single('image'), createLocation);
 locationRouter.get('/', getAllLocations);
 locationRouter.get('/:id', getLocationById);
-locationRouter.put('/:id', updateLocation);
-locationRouter.delete('/:id', deleteLocation);
+locationRouter.put('/:id', authenticate, authorize(['ADMIN']), updateLocation);
+locationRouter.delete('/:id', authenticate, authorize(['ADMIN']), deleteLocation);
 
 
 module.exports = locationRouter;
