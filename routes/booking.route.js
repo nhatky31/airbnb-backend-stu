@@ -7,9 +7,11 @@ const {
   deleteBooking
 } = require('../controllers/booking.controller');
 
+const { authenticate } = require('../middlewares/auth.middleware');
+
 const bookingRouter = express.Router();
 
-bookingRouter.post('/', createBooking); // POST /api/bookings
+bookingRouter.post('/', authenticate, createBooking); // POST /api/bookings
 bookingRouter.get('/', getAllBookings); // GET /api/bookings
 bookingRouter.get('/:id', getBookingById); // GET /api/bookings/:id
 bookingRouter.put('/:id', updateBooking); // PUT /api/bookings/:id
