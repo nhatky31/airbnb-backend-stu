@@ -2,7 +2,8 @@ const { Ticket } = require('../models');
 
 const createBooking = async (req, res) => {
   try {
-    const { userId, roomId, checkIn, checkOut } = req.body;
+    const {  roomId, checkIn, checkOut } = req.body;
+    const userId = req.user.id;// Lấy ID chuẩn xác từ thẻ Token của người đang đăng nhập
     
     const newBooking = await Ticket.create({ 
       userId, 
