@@ -3,9 +3,11 @@ const userRouter = require('./user.route');
 const locationRouter = require('./location.route');
 const roomRouter = require('./room.route');
 const bookingRouter = require('./booking.route');
+const authRouter = require('./auth.route');
 
 const rootRouter = express.Router();
 
+rootRouter.use('/auth', authRouter); // Tất cả các route liên quan đến xác thực sẽ được định nghĩa trong authRouter
 rootRouter.use('/users', userRouter); // Tất cả các route liên quan đến người dùng sẽ được định nghĩa trong userRouter
 rootRouter.use('/locations', locationRouter); // Tất cả các route liên quan đến địa điểm sẽ được định nghĩa trong locationRouter
 rootRouter.use('/rooms', roomRouter); // Tất cả các route liên quan đến phòng sẽ được định nghĩa trong roomRouter
