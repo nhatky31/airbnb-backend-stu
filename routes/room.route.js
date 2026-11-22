@@ -7,17 +7,18 @@ const {
   deleteRoom
 } = require('../controllers/room.controller');
 
-const { authenticate , authorize } = require('../middlewares/auth.middleware');
+const { authenticate, authorize } = require('../middlewares/auth.middleware');
+const uploadCloud = require('../middlewares/upload.middleware');
 
 const roomRouter = express.Router();
 
+roomRouter.get('/', getAllRooms);
+roomRouter.get('/:id', getRoomById);
 
+// Chỉ ADMIN mới được tạo/sửa phòng kèm upload ảnh
+roomRouter.post('/', authenticate, authorize(['ADMIN']), uploadCloud.single('image'), createRoom);
+roomRouter.put('/:id', authenticate, authorize(['ADMIN']), uploadCloud.single('image'), updateRoom);
 
-
-roomRouter.post('/', authenticate,authorize(['ADMIN']), createRoom); // POST /api/rooms
-roomRouter.get('/', getAllRooms); // GET /api/rooms
-roomRouter.get('/:id', getRoomById); // GET /api/rooms/:id
-roomRouter.put('/:id', authenticate, authorize(['ADMIN']), updateRoom); // PUT /api/rooms/:id
-roomRouter.delete('/:id',authenticate,authorize(['ADMIN']), deleteRoom); // DELETE /api/rooms/:id
+roomRouter.delete('/:id', authenticate, authorize(['ADMIN']), deleteRoom);
 
 module.exports = roomRouter;

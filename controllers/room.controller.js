@@ -1,14 +1,23 @@
 const {Room}= require('../models');
 
-const createRoom=async (req,res)=>{
-    try{
-        const {name,description,price,guest,bedRoom,bath,locationId,image}=req.body;
-        const newRoom=await Room.create({name,description,price,guest,bedRoom,bath,locationId,image});
-        res.status(201).json(newRoom);
-    }catch(err){
-        res.status(500).json({error:'Lỗi khi tạo phòng', details: err.message});
-    }
-}
+// 1. Hàm tạo phòng mới
+const createRoom = async (req, res) => {
+  try {
+    // Lấy link ảnh từ Cloudinary (nếu có upload)
+    const image = req.file ? req.file.path : "";
+
+    // Gộp toàn bộ trường text từ req.body kèm link ảnh thật
+    const newRoom = await Room.create({
+      ...req.body,
+      image,
+    });
+
+    res.status(201).json(newRoom);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Lỗi khi tạo phòng", error: error.message });
+  }
+};
 
 const getAllRooms=async (req,res)=>{
     try{
@@ -32,21 +41,28 @@ const getRoomById=async (req,res)=>{
     }
 }
 
-const updateRoom=async (req,res)=>{
-    try{
-        const {id}=req.params;
-        const {name,description,price,guest,bedRoom,bath,locationId,image}=req.body;
-        const room=await Room.findByPk(id);
-        if(!room){
-            return res.status(404).json({error:'Phòng không tồn tại'});
-        }
-        await room.update({name,description,price,guest,bedRoom,bath,locationId,image});
-        res.status(200).json(room);
-    }catch(err){
-        res.status(500).json({error:'Lỗi khi cập nhật thông tin phòng', details: err.message});
-    }
-}
+// 2. Hàm cập nhật phòng (giữ nguyên ảnh cũ nếu không gửi ảnh mới)
+const updateRoom = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const room = await Room.findByPk(id);
 
+    if (!room) {
+      return res.status(404).json({ message: "Không tìm thấy phòng!" });
+    }
+
+    const updateData = { ...req.body };
+    if (req.file) {
+      updateData.image = req.file.path; // Chỉ ghi đè link ảnh nếu có upload file mới
+    }
+
+    await room.update(updateData);
+    res.status(200).json(room);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Lỗi khi cập nhật phòng", error: error.message });
+  }
+};
 const deleteRoom=async (req,res)=>{
     try{
         const {id}=req.params;
