@@ -55,8 +55,8 @@ const login = async (req, res) => {
       type: user.type
     };
     
-    const secretKey = "Ky_Airbnb_Secret_Key"; // Chìa khóa bí mật để ký token
-    const token = jwt.sign(payload, secretKey, { expiresIn: '1h' }); // Thẻ này có hạn 1 tiếng
+   const secretKey = process.env.JWT_SECRET;
+const token = jwt.sign(payload, secretKey, { expiresIn: '1h' });
 
     res.status(200).json({
       message: "Đăng nhập thành công!",

@@ -11,8 +11,8 @@ const authenticate = (req, res, next) => {
     }
 
     // Giải mã token bằng Secret Key lúc nãy
-    const secretKey = "Ky_Airbnb_Secret_Key";
-    const decoded = jwt.verify(token, secretKey);
+   const secretKey = process.env.JWT_SECRET;
+const decoded = jwt.verify(token, secretKey);
 
     // Gắn thông tin user giải mã được vào request để các hàm phía sau sử dụng
     req.user = decoded; 

@@ -3,12 +3,11 @@ const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const multer = require('multer');
 
 // 1. Cấu hình chìa khóa kết nối với Cloudinary của bạn
-cloudinary.config({ 
-  cloud_name: 'oy7juu7t', 
-  api_key: '936848531128289', 
-  api_secret: 'PrXBNwBRWUQfpWAx1ZqZ7fHmEbU' 
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET,
 });
-
 // 2. Cấu hình kho lưu trữ trên mây
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
