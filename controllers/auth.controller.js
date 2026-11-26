@@ -63,8 +63,9 @@ const token = jwt.sign(payload, secretKey, { expiresIn: '1h' });
       token: token
     });
   } catch (error) {
-    res.status(500).json({ message: "Lỗi khi đăng nhập", error });
-  }
+  console.error(error);
+  res.status(500).json({ message: "Lỗi khi đăng nhập", error: error.message });
+}
 };
 
 module.exports = { register, login };
