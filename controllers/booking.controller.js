@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { Booking, Room } = require('../models');
+const { Ticket: Booking, Room } = require('../models');
 
 // 1. Tạo đơn đặt phòng (lấy userId từ Token + chặn trùng lịch)
 const createBooking = async (req, res) => {
