@@ -63,7 +63,7 @@ const getAllRooms = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: "Lỗi khi lấy danh sách phòng", error: error.message });
   }
-};c
+};
 
 const getRoomById=async (req,res)=>{
     try{
