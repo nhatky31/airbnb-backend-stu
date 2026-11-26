@@ -14,7 +14,10 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'token'],
 }));
 
-
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger');
+// Trang tài liệu Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use('/api', rootRouter); // Tất cả các route sẽ bắt đầu bằng /api
 
 // Lệnh đồng bộ cấu trúc Models xuống MySQL (Đã đổi thành alter: true)
