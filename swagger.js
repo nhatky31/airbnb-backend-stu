@@ -28,12 +28,13 @@ const swaggerDocument = {
   tags: [
     { name: 'Auth', description: 'Đăng ký & Đăng nhập' },
     { name: 'Rooms', description: 'Quản lý & Tìm kiếm phòng' },
+    { name: 'Locations', description: 'Quản lý địa điểm' },
     { name: 'Bookings', description: 'Đặt phòng & Lịch sử cá nhân' },
     { name: 'Reviews', description: 'Bình luận phòng' },
-    { name: 'Locations', description: 'Quản lý địa điểm' },
     { name: 'Users', description: 'Quản lý người dùng' },
   ],
   paths: {
+    // ==================== AUTH ====================
     '/auth/register': {
       post: {
         tags: ['Auth'],
@@ -90,6 +91,8 @@ const swaggerDocument = {
         },
       },
     },
+
+    // ==================== ROOMS ====================
     '/rooms': {
       get: {
         tags: ['Rooms'],
@@ -122,7 +125,7 @@ const swaggerDocument = {
                   description: { type: 'string', example: 'Phòng rộng rãi, thoáng mát' },
                   price: { type: 'integer', example: 1500000 },
                   locationId: { type: 'integer', example: 1 },
-                  image: { type: 'string', format: 'binary', description: 'File ảnh upload lên Cloudinary' },
+                  image: { type: 'string', format: 'binary', description: 'File ảnh phòng' },
                 },
               },
             },
@@ -135,6 +138,157 @@ const swaggerDocument = {
         },
       },
     },
+    '/rooms/{id}': {
+      get: {
+        tags: ['Rooms'],
+        summary: 'Lấy chi tiết một phòng theo ID',
+        parameters: [
+          { name: 'id', in: 'path', required: true, schema: { type: 'integer', example: 30001 } },
+        ],
+        responses: {
+          200: { description: 'Thông tin chi tiết phòng' },
+          404: { description: 'Không tìm thấy phòng' },
+        },
+      },
+      put: {
+        tags: ['Rooms'],
+        summary: 'Cập nhật thông tin phòng (Admin + tùy chọn đổi ảnh)',
+        security: [{ TokenAuth: [] }],
+        parameters: [
+          { name: 'id', in: 'path', required: true, schema: { type: 'integer' } },
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            'multipart/form-data': {
+              schema: {
+                type: 'object',
+                properties: {
+                  name: { type: 'string', example: 'Villa Đà Lạt (Đã cập nhật)' },
+                  guests: { type: 'integer', example: 6 },
+                  bedRoom: { type: 'integer', example: 3 },
+                  bath: { type: 'integer', example: 2 },
+                  description: { type: 'string', example: 'Cập nhật mô tả phòng' },
+                  price: { type: 'integer', example: 1800000 },
+                  locationId: { type: 'integer', example: 1 },
+                  image: { type: 'string', format: 'binary', description: 'Ảnh mới (nếu muốn thay đổi)' },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          200: { description: 'Cập nhật phòng thành công' },
+          403: { description: 'Không có quyền Admin' },
+          404: { description: 'Không tìm thấy phòng' },
+        },
+      },
+      delete: {
+        tags: ['Rooms'],
+        summary: 'Xóa phòng (Admin)',
+        security: [{ TokenAuth: [] }],
+        parameters: [
+          { name: 'id', in: 'path', required: true, schema: { type: 'integer' } },
+        ],
+        responses: {
+          200: { description: 'Xóa phòng thành công' },
+          403: { description: 'Không có quyền Admin' },
+          404: { description: 'Không tìm thấy phòng' },
+        },
+      },
+    },
+
+    // ==================== LOCATIONS ====================
+    '/locations': {
+      get: {
+        tags: ['Locations'],
+        summary: 'Lấy danh sách tất cả địa điểm',
+        responses: {
+          200: { description: 'Danh sách địa điểm' },
+        },
+      },
+      post: {
+        tags: ['Locations'],
+        summary: 'Tạo địa điểm mới (Admin + Upload ảnh Cloudinary)',
+        security: [{ TokenAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            'multipart/form-data': {
+              schema: {
+                type: 'object',
+                properties: {
+                  name: { type: 'string', example: 'Hồ Xuân Hương' },
+                  province: { type: 'string', example: 'Lâm Đồng' },
+                  country: { type: 'string', example: 'Việt Nam' },
+                  valueate: { type: 'integer', example: 9 },
+                  image: { type: 'string', format: 'binary', description: 'File ảnh địa điểm' },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          201: { description: 'Tạo địa điểm thành công' },
+          403: { description: 'Không có quyền Admin' },
+        },
+      },
+    },
+    '/locations/{id}': {
+      get: {
+        tags: ['Locations'],
+        summary: 'Lấy chi tiết địa điểm theo ID',
+        parameters: [
+          { name: 'id', in: 'path', required: true, schema: { type: 'integer', example: 1 } },
+        ],
+        responses: {
+          200: { description: 'Chi tiết địa điểm' },
+          404: { description: 'Không tìm thấy địa điểm' },
+        },
+      },
+      put: {
+        tags: ['Locations'],
+        summary: 'Cập nhật địa điểm (Admin)',
+        security: [{ TokenAuth: [] }],
+        parameters: [
+          { name: 'id', in: 'path', required: true, schema: { type: 'integer' } },
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  name: { type: 'string', example: 'Đà Lạt Trung Tâm' },
+                  province: { type: 'string', example: 'Lâm Đồng' },
+                  country: { type: 'string', example: 'Việt Nam' },
+                  valueate: { type: 'integer', example: 10 },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          200: { description: 'Cập nhật địa điểm thành công' },
+          403: { description: 'Không có quyền Admin' },
+        },
+      },
+      delete: {
+        tags: ['Locations'],
+        summary: 'Xóa địa điểm (Admin)',
+        security: [{ TokenAuth: [] }],
+        parameters: [
+          { name: 'id', in: 'path', required: true, schema: { type: 'integer' } },
+        ],
+        responses: {
+          200: { description: 'Xóa địa điểm thành công' },
+          403: { description: 'Không có quyền Admin' },
+        },
+      },
+    },
+
+    // ==================== BOOKINGS ====================
     '/bookings': {
       post: {
         tags: ['Bookings'],
@@ -173,6 +327,8 @@ const swaggerDocument = {
         },
       },
     },
+
+    // ==================== REVIEWS ====================
     '/reviews': {
       post: {
         tags: ['Reviews'],
@@ -221,16 +377,103 @@ const swaggerDocument = {
         summary: 'Xóa bình luận (Chủ bình luận hoặc Admin)',
         security: [{ TokenAuth: [] }],
         parameters: [
-          {
-            name: 'id',
-            in: 'path',
-            required: true,
-            schema: { type: 'integer' },
-          },
+          { name: 'id', in: 'path', required: true, schema: { type: 'integer' } },
         ],
         responses: {
           200: { description: 'Xóa thành công' },
           403: { description: 'Không có quyền xóa bình luận của người khác' },
+        },
+      },
+    },
+
+    // ==================== USERS ====================
+    '/users': {
+      get: {
+        tags: ['Users'],
+        summary: 'Lấy danh sách người dùng (có phân trang)',
+        parameters: [
+          { name: 'page', in: 'query', schema: { type: 'integer', default: 1 } },
+          { name: 'limit', in: 'query', schema: { type: 'integer', default: 10 } },
+        ],
+        responses: {
+          200: { description: 'Danh sách người dùng' },
+        },
+      },
+      post: {
+        tags: ['Users'],
+        summary: 'Tạo người dùng mới',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['name', 'email', 'password'],
+                properties: {
+                  name: { type: 'string', example: 'Trần Văn B' },
+                  email: { type: 'string', example: 'tranb@gmail.com' },
+                  password: { type: 'string', example: '123456' },
+                  phone: { type: 'string', example: '0909123456' },
+                  birthday: { type: 'string', example: '2003-05-15' },
+                  gender: { type: 'boolean', example: true },
+                  type: { type: 'string', example: 'USER' },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          201: { description: 'Tạo người dùng thành công' },
+        },
+      },
+    },
+    '/users/{id}': {
+      get: {
+        tags: ['Users'],
+        summary: 'Lấy thông tin người dùng theo ID',
+        parameters: [
+          { name: 'id', in: 'path', required: true, schema: { type: 'integer' } },
+        ],
+        responses: {
+          200: { description: 'Thông tin người dùng' },
+          404: { description: 'Không tìm thấy người dùng' },
+        },
+      },
+      put: {
+        tags: ['Users'],
+        summary: 'Cập nhật thông tin người dùng',
+        parameters: [
+          { name: 'id', in: 'path', required: true, schema: { type: 'integer' } },
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  name: { type: 'string', example: 'Trần Văn B (Updated)' },
+                  phone: { type: 'string', example: '0988777666' },
+                  birthday: { type: 'string', example: '2003-05-15' },
+                  gender: { type: 'boolean', example: true },
+                  address: { type: 'string', example: 'Quận 8, TP.HCM' },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          200: { description: 'Cập nhật thành công' },
+        },
+      },
+      delete: {
+        tags: ['Users'],
+        summary: 'Xóa người dùng theo ID',
+        parameters: [
+          { name: 'id', in: 'path', required: true, schema: { type: 'integer' } },
+        ],
+        responses: {
+          200: { description: 'Xóa thành công' },
         },
       },
     },
