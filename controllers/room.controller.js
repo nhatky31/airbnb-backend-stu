@@ -1,4 +1,6 @@
-const {Room}= require('../models');
+
+const { Op } = require('sequelize');
+const { Room } = require('../models'); // Giữ nguyên các model khác bạn đã import (vd: Location)
 
 // 1. Hàm tạo phòng mới
 const createRoom = async (req, res) => {
@@ -19,14 +21,49 @@ const createRoom = async (req, res) => {
   }
 };
 
-const getAllRooms=async (req,res)=>{
-    try{
-        const rooms=await Room.findAll();
-        res.status(200).json(rooms);
-    }catch(err){
-        res.status(500).json({error:'Lỗi khi lấy danh sách phòng', details: err.message});
+const getAllRooms = async (req, res) => {
+  try {
+    // 1. Lấy tham số từ URL query & gán giá trị mặc định an toàn
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.max(1, parseInt(req.query.limit) || 10);
+    const offset = (page - 1) * limit;
+
+    const { keyword, locationId } = req.query;
+
+    // 2. Tạo điều kiện lọc động (có truyền thì mới lọc)
+    const whereClause = {};
+
+    if (keyword) {
+      whereClause.name = { [Op.like]: `%${keyword}%` }; // Tìm gần đúng theo tên phòng
     }
-}
+
+    if (locationId) {
+      whereClause.locationId = parseInt(locationId); // Lọc đúng theo ID địa điểm
+    }
+
+    // 3. Truy vấn DB bằng findAndCountAll
+    const { count, rows } = await Room.findAndCountAll({
+      where: whereClause,
+      limit,
+      offset,
+      order: [['createdAt', 'DESC']], // Phòng mới tạo hiện lên trước
+    });
+
+    // 4. Trả về dữ liệu kèm metadata phân trang
+    res.status(200).json({
+      data: rows,
+      pagination: {
+        totalItems: count,
+        totalPages: Math.ceil(count / limit),
+        currentPage: page,
+        limit,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Lỗi khi lấy danh sách phòng", error: error.message });
+  }
+};c
 
 const getRoomById=async (req,res)=>{
     try{
